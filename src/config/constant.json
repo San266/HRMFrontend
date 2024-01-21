@@ -1,0 +1,5 @@
+{
+    "SERVER_URL": "http://localhost:5000/api/v1",
+    "COOKIES_CONFIG": "include",
+    "DOMAIN": "levelnext.worldfellow.com"
+}
