@@ -334,14 +334,31 @@ export default function branch() {
                                                 })
                                                 .map((data, index) => {
                                                     return (
+                                                        // <tr key={index}>
+                                                        //     <td className="text-center">{data.id}</td>
+                                                        //     <td className="text-center">{data.branchName}</td>
+                                                        //     <td className="text-center">
+                                                        //         <Link to={{ pathname: "/pages/branch", state: { data: data } }}>
+                                                        //             {/* <CButton color="primary">View</CButton> */}
+                                                        //         </Link>
+                                                        //     </td>
+
+                                                        // </tr>
+
                                                         <tr key={index}>
                                                             <td className="text-center">{data.id}</td>
                                                             <td className="text-center">{data.branchName}</td>
+                                                            {/* <td className="text-center"> */}
+                                                            {/* <Link to={{ pathname: "/pages/branch", state: { data: data } }}> */}
+                                                            {/* <CButton color="primary">View</CButton> */}
                                                             <td className="text-center">
-                                                                <Link to={{ pathname: "/pages/branch", state: { data: data } }}>
-                                                                    {/* <CButton color="primary">View</CButton> */}
-                                                                </Link>
+                                                                <div className="d-flex align-items-center justify-content-center">
+                                                                    <CButton color="primary" onClick={() => handleUpdateBranchModal(data)}>Edit</CButton> &nbsp;
+                                                                    <CButton color="danger" onClick={() => handleDeleteBranch(data.id)} className="ml-2">Delete</CButton>
+                                                                </div>
                                                             </td>
+                                                            {/* </Link> */}
+                                                            {/* </td> */}
                                                         </tr>
                                                     );
                                                 })

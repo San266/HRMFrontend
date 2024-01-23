@@ -8,6 +8,8 @@ import LoadingScreen from 'src/views/shared/Loading';
 import Toaster from 'src/views/shared/Toaster';
 import configData from "../../../config/constant.json";
 import moment from 'moment';
+import ReactPaginate from 'react-paginate';
+import { Link } from 'react-router-dom';
 
 export default function timesheet() {
 
@@ -114,7 +116,23 @@ export default function timesheet() {
         }
     }
 
+  // Pagination logic
+  const itemsPerPage = 10;
+  const [currentItems, setCurrentItems] = React.useState([]);
+  const [pageCount, setPageCount] = React.useState(0);
+  const [itemOffset, setItemOffset] = React.useState(0);
+  const [search, setSearch] = React.useState('');
 
+  React.useEffect(() => {
+      const endOffset = itemOffset + itemsPerPage;
+      setCurrentItems(timesheet.slice(itemOffset, endOffset));
+      setPageCount(Math.ceil(timesheet.length / itemsPerPage));
+  }, [itemOffset, itemsPerPage, timesheet]);
+
+  const handlePageClick = (event) => {
+      const newOffset = (event.selected * itemsPerPage) % timesheet.length;
+      setItemOffset(newOffset);
+  };
 
     return (
         <div>
@@ -140,9 +158,21 @@ export default function timesheet() {
                     :
                     <CRow>
                         <CCol sm={12}>
-                            <CCard>
+                            <CCard style={{ margin: '20px', padding: '20px', backgroundColor: '#f8f9fa' }}>
                                 <CCardBody>
-                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table">
+                                <CRow>
+                                        <CCol>
+                                            <CCardTitle style={{ marginBottom: '20px', fontSize: '1.5rem' }}>Timesheet Details</CCardTitle>
+                                        </CCol>
+                                        <CCol xs="auto">
+                                            <CFormInput
+                                                placeholder="Search"
+                                                autoComplete="Search"
+                                                onChange={(e) => setSearch(e.target.value)}
+                                            />
+                                        </CCol>
+                                    </CRow>
+                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table ">
                                         <thead className="thead-light">
                                             <tr>
                                                 {
@@ -158,8 +188,12 @@ export default function timesheet() {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {
-                                                timesheet.map((data, index) => (
+                                        {
+                                                loading && <LoadingScreen /> ||
+
+                                                    search == '' ?
+                                                currentItems.map((data, index) => {
+                                                    return (
                                                     <tr key={index}
                                                         // onClick={() => {
                                                         //     setViewData(data);
@@ -180,21 +214,82 @@ export default function timesheet() {
                                                                 data.remarks
                                                         }</td>
 
-                                                        <td className="text-center">
+                                                        <td >
+                                                            <div className="d-flex align-items-center justify-content-center">
                                                             <CButton color="info" onClick={() => {
                                                                 setViewModal(false)
                                                                 setEditData(data);
                                                                 setEditModal(true);
-                                                            }}>Edit</CButton>
-                                                            <CButton color="danger" onClick={() => handleDeleteTimesheet(data.id)}>Delete</CButton>
+                                                            }}>Edit</CButton> &nbsp;
+                                                            <CButton color="danger" onClick={() => handleDeleteTimesheet(data.id)}  className="ml-2" >Delete</CButton>
+                                                       </div>
                                                         </td>
 
                                                     </tr>
-                                                ))
-                                            }
+                                                     ) || <LoadingScreen />
+                                                    })
+                                                    : timesheet
+                                                    .filter((val) => {
+                                                        const searchLower = search.toLowerCase();
+                                                        return (
+                                                            val.name.toLowerCase().includes(searchLower) ||
+                                                            val.date.toLowerCase().includes(searchLower) ||
+                                                            val.hours.toLowerCase().includes(searchLower) ||
+                                                            val.remarks.toLowerCase().includes(searchLower) 
+
+                                                        );
+                                                    })
+                                                    .map((data, index) => {
+                                                        return (
+                                                            <tr key={index}>
+                                                                {/* <td className="text-center">{data.id}</td> */}
+                                                                {
+                                                            role == "ADMIN" &&
+                                                            <td className="text-center">{data.name}</td>
+                                                        }
+                                                                <td className="text-center">{moment(data.date).format('DD/MM/YYYY')}</td>
+                                                                <td className="text-center">{data.hours}</td>
+                                                                <td className="text-center">{data.remarks}</td>
+                                                                <td className="text-center">
+                                                                    {/* <Link to={{ pathname: "/pages/timesheet", state: { data: data } }}> */}
+                                                                        {/* <CButton color="primary">View</CButton> </Link>*/}
+                                                                    
+                                                                    <div className="d-flex align-items-center justify-content-center">
+                                                            <CButton color="info" onClick={() => {
+                                                                setViewModal(false)
+                                                                setEditData(data);
+                                                                setEditModal(true);
+                                                            }}>Edit</CButton> &nbsp;
+                                                            <CButton color="danger" onClick={() => handleDeleteTimesheet(data.id)}  className="ml-2" >Delete</CButton>
+                                                       </div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })
+
+                                        }
                                         </tbody>
                                     </table>
                                 </CCardBody>
+                                <ReactPaginate
+                                    previousLabel={"previous"}
+                                    nextLabel={"next"}
+                                    breakLabel={"..."}
+                                    pageCount={pageCount}
+                                    marginPagesDisplayed={2}
+                                    pageRangeDisplayed={3}
+                                    onPageChange={handlePageClick}
+                                    containerClassName={"pagination justify-content-center"}
+                                    pageClassName={"page-item"}
+                                    pageLinkClassName={"page-link"}
+                                    previousClassName={"page-item"}
+                                    previousLinkClassName={"page-link"}
+                                    nextClassName={"page-item"}
+                                    nextLinkClassName={"page-link"}
+                                    breakClassName={"page-item"}
+                                    breakLinkClassName={"page-link"}
+                                    activeClassName={"active"}
+                                />
                             </CCard>
                         </CCol>
                     </CRow>

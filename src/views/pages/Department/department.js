@@ -248,7 +248,10 @@ export default function department() {
         const newOffset = (event.selected * itemsPerPage) % departmentData.length;
         setItemOffset(newOffset);
     };
-
+    const handleEditDepartmentModal = (data) => {
+        setUpdateDepData(data);
+        setUpdateDepModal(true);
+    }
 
 
     return (
@@ -296,7 +299,7 @@ export default function department() {
                                             />
                                         </CCol>
                                     </CRow>
-                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered" style={{
+                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered text-center" style={{
                                         marginTop: '20px',
                                     }}>
 
@@ -321,7 +324,7 @@ export default function department() {
                                                                 <td>{data.departmentName}</td>
                                                                 <td>{data.branchName}</td>
                                                                 <td style={{ textAlign: 'center' }}>
-                                                                    <CButton color="primary" onClick={() => { setUpdateDepModal(true); console.log("data0", data); setUpdateDepData(data); }}
+                                                                    <CButton color="primary" onClick={() => { handleEditDepartmentModal(data); console.log("data0", data); }}
                                                                     >Edit</CButton> &nbsp;
                                                                     <CButton color="danger" onClick={() => { handleDeleteDepartment(data.id) }}
                                                                     >Delete</CButton>
@@ -340,15 +343,22 @@ export default function department() {
                                                         })
                                                         .map((data, index) => {
                                                             return (
+
                                                                 <tr key={index}>
                                                                     <td className="text-center">{data.id}</td>
                                                                     <td className="text-center">{data.departmentName}</td>
                                                                     <td className="text-center">{data.branchName}</td>
+                                                                    {/* <td className="text-center"> */}
+                                                                    {/* <Link to={{ pathname: "/pages/branch", state: { data: data } }}> */}
+                                                                    {/* <CButton color="primary">View</CButton> */}
                                                                     <td className="text-center">
-                                                                        <Link to={{ pathname: "/pages/department", state: { data: data } }}>
-                                                                            {/* <CButton color="primary">View</CButton> */}
-                                                                        </Link>
+                                                                        <div className="d-flex align-items-center justify-content-center">
+                                                                            <CButton color="primary" onClick={() => handleEditDepartmentModal(data)}>Edit</CButton> &nbsp;
+                                                                            <CButton color="danger" onClick={() => handleDeleteDepartment(data.id)}>Delete</CButton>
+                                                                        </div>
                                                                     </td>
+                                                                    {/* </Link> */}
+                                                                    {/* </td>   */   }
                                                                 </tr>
                                                             );
                                                         })

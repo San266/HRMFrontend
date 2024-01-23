@@ -984,22 +984,26 @@ export default function employee(props) {
                     {console.log("editModal data:", editModal)}
                     <Formik
                         // set the initial values to the data of the employee to be edited with spread operator to set the values for specfic fields like branch is editData.branchName
-                        initialValues={{
-                            name: editModal.name,
-                            phone: editModal.phone,
-                            dob: editModal.dob,
-                            email: editModal.email,
-                            branch: editModal.branch,
-                            department: editModal.department,
-                            designation: editModal.designation,
-                            doj: editModal.doj,
-                            photo: editModal.photo,
-                            resume: editModal.resume,
-                            accountHolderName:editModal.accountHolderName,
-                            accountNumber:editModal.accountNumber,
-                            bankName:editModal.bankName,
-                            bankIdentifierCode:editModal.bankIdentifierCode,
-                            branchLocation:editModal.branchLocation,
+                        // initialValues={
+                            // name: editModal.name,
+                            // phone: editModal.phone,
+                            // dob: editModal.dob,
+                            // email: editModal.email,
+                            // branch: editModal.branch,
+                            // department: editModal.department,
+                            // designation: editModal.designation,
+                            // doj: editModal.doj,
+                            // photo: editModal.photo,
+                            // resume: editModal.resume,
+                            // accountHolderName:editModal.accountHolderName,
+                            // accountNumber:editModal.accountNumber,
+                            // bankName:editModal.bankName,
+                            // bankIdentifierCode:editModal.bankIdentifierCode,
+                            // branchLocation:editModal.branchLocation,
+                            initialValues={editData && {
+                                branch: editData.branchName,
+                                department: editData.departmentName,
+                                designation: editData.designationName
                         }}
                         onSubmit={(values) => {
                             console.log("values", values);

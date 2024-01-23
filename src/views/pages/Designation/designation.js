@@ -57,7 +57,7 @@ export default function designation() {
         }
     }, []);
 
-   
+
     React.useEffect(async () => {
         try {
             let token = secureLocalStorage.getItem("token");
@@ -87,9 +87,9 @@ export default function designation() {
             setRole(userRoles);
             console.log("roledesc:", userRoles)
         }, []);
-    
-    }, 
-    []);
+
+    },
+        []);
 
     const handleAddDesignation = async (values) => {
         try {
@@ -254,15 +254,15 @@ export default function designation() {
                                             />
                                         </CCol>
                                     </CRow>
-                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered" style={{
+                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered  text-center" style={{
                                         marginTop: '20px',
                                     }}>
                                         <thead className="thead-light">
                                             <tr>
-                                                <th className="text-center">Sr No.</th>
+                                                <th >Sr No.</th>
                                                 <th>Designation</th>
                                                 <th>Department</th>
-                                                <th className="text-center">Action</th>
+                                                <th >Action</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -273,14 +273,14 @@ export default function designation() {
                                                     currentItems.map((data, index) => {
                                                         return (
                                                             <tr key={index}>
-                                                                <td className="text-center">
+                                                                <td >
                                                                     <div>{index + 1}</div>
                                                                 </td>
                                                                 <td>
                                                                     <div>{data.designationName}</div>
                                                                 </td>
                                                                 <td>{data.departmentName}</td>
-                                                                <td className="text-center">
+                                                                <td >
                                                                     <CButton color="primary" onClick={() => {
                                                                         setDesignationUpdateModal(true)
                                                                         setDesignationUpdateData(data)
@@ -303,15 +303,27 @@ export default function designation() {
                                                         })
                                                         .map((data, index) => {
                                                             return (
+
                                                                 <tr key={index}>
                                                                     <td className="text-center">{data.id}</td>
                                                                     <td className="text-center">{data.designationName}</td>
                                                                     <td className="text-center">{data.departmentName}</td>
+                                                                    {/* <td className="text-center"> */}
+                                                                    {/* <Link to={{ pathname: "/pages/branch", state: { data: data } }}> */}
+                                                                    {/* <CButton color="primary">View</CButton> */}
                                                                     <td className="text-center">
-                                                                        <Link to={{ pathname: "/pages/designation", state: { data: data } }}>
-                                                                            {/* <CButton color="primary">View</CButton> */}
-                                                                        </Link>
+                                                                        <div className="d-flex align-items-center justify-content-center">
+                                                                            <CButton color="primary" onClick={() => {
+                                                                                setDesignationUpdateModal(true)
+                                                                                setDesignationUpdateData(data)
+                                                                                console.log("data", data);
+                                                                            }
+                                                                            }>Edit</CButton> &nbsp;
+                                                                            <CButton color="danger" className="ml-3" onClick={() => handleDeleteDesignation(data.id)}>Delete</CButton>
+                                                                        </div>
                                                                     </td>
+                                                                    {/* </Link> */}
+                                                                    {/* </td> */}
                                                                 </tr>
                                                             );
                                                         })

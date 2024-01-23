@@ -8,6 +8,8 @@ import LoadingScreen from 'src/views/shared/Loading';
 import Toaster from 'src/views/shared/Toaster';
 import configData from "../../../config/constant.json";
 import moment from 'moment';
+import ReactPaginate from 'react-paginate';
+import { Link } from 'react-router-dom';
 
 export default function awards() {
 
@@ -129,7 +131,7 @@ export default function awards() {
                 console.log("Response --->", response.data.data);
                 setAwardEditModal(false);
             }
-            
+
         } catch (error) {
             setAwardEditModal(false);
             console.log(`Err while updating award ${error}`);
@@ -147,7 +149,7 @@ export default function awards() {
 
             let response = await axios.post(`${configData.SERVER_URL}/award/deleteAward/${id}`, { withCredentials: true });
             if (response.data.status == 200) {
-                
+
                 setAwards(awards.filter((award) => award.id != id));
                 let toast = {
                     "status": true,
@@ -156,7 +158,7 @@ export default function awards() {
                 }
                 addToaster(toast);
             }
-            
+
         } catch (error) {
             console.log(`Err while deleting award ${error}`);
             let toast = {
@@ -167,6 +169,23 @@ export default function awards() {
             addToaster(toast);
         }
     }
+
+    const itemsPerPage = 10;
+    const [currentItems, setCurrentItems] = React.useState([]);
+    const [pageCount, setPageCount] = React.useState(0);
+    const [itemOffset, setItemOffset] = React.useState(0);
+    const [search, setSearch] = React.useState('');
+
+    React.useEffect(() => {
+        const endOffset = itemOffset + itemsPerPage;
+        setCurrentItems(awards.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(awards.length / itemsPerPage));
+    }, [itemOffset, itemsPerPage, awards]);
+
+    const handlePageClick = (event) => {
+        const newOffset = (event.selected * itemsPerPage) % awards.length;
+        setItemOffset(newOffset);
+    };
 
     return (
         <div>
@@ -191,10 +210,22 @@ export default function awards() {
             {
                 !loading ?
                     <CRow>
-                        <CCol sm={12}>
-                            <CCard>
+                        <CCol>
+                            <CCard style={{ margin: '20px', padding: '20px', backgroundColor: '#f8f9fa' }}>
                                 <CCardBody>
-                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table ">
+                                    <CRow>
+                                        <CCol>
+                                            <CCardTitle style={{ marginBottom: '20px', fontSize: '1.5rem' }}>Awards Details</CCardTitle>
+                                        </CCol>
+                                        <CCol xs="auto">
+                                            <CFormInput
+                                                placeholder="Search"
+                                                autoComplete="Search"
+                                                onChange={(e) => setSearch(e.target.value)}
+                                            />
+                                        </CCol>
+                                    </CRow>
+                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table text-center">
                                         <thead className="thead-light">
                                             <tr>
                                                 <th>Sr No.</th>
@@ -208,39 +239,97 @@ export default function awards() {
                                         </thead>
                                         <tbody>
                                             {
-                                                awards.map((award, index) => (
-                                                    <tr key={index}>
-                                                        <td>
-                                                            <div>{index + 1}</div>
-                                                        </td>
+                                                loading && <LoadingScreen /> ||
 
-                                                        <td>
-                                                            <div>{award.name}</div>
+                                                    search == '' ?
+                                                    currentItems.map((award, index) => {
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    <div>{index + 1}</div>
+                                                                </td>
 
-                                                        </td>
-                                                        <td>
-                                                            <div>{award.awardType}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div>{moment(award.date).format("DD-MM-YYYY")}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div>{award.gift}</div>
-                                                        </td>
-                                                        <td>
-                                                            <div>{award.description}</div>
-                                                        </td>
-                                                        <td>
-                                                            <CButton color="primary" onClick={() => { setAwardEditModal(true); setEditData(award) }}>Edit</CButton> &nbsp;
-                                                            <CButton color="danger" onClick={() => handleDeleteAward(award.id)}>Delete</CButton>
-                                                        </td>
-                                                    </tr>
+                                                                <td>
+                                                                    <div>{award.name}</div>
 
-                                                ))}
+                                                                </td>
+                                                                <td>
+                                                                    <div>{award.awardType}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <div>{moment(award.date).format("DD-MM-YYYY")}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <div>{award.gift}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <div>{award.description}</div>
+                                                                </td>
+                                                                <td>
+                                                                    <CButton color="primary" onClick={() => { setAwardEditModal(true); setEditData(award) }}>Edit</CButton> &nbsp;
+                                                                    <CButton color="danger" onClick={() => handleDeleteAward(award.id)}>Delete</CButton>
+                                                                </td>
+                                                            </tr>
+
+                                                        ) || <LoadingScreen />
+                                                    })
+                                                    : awards
+                                                        .filter((val) => {
+                                                            const searchLower = search.toLowerCase();
+                                                            return (
+                                                                val.name.toLowerCase().includes(searchLower) ||
+                                                                val.awardType.toLowerCase().includes(searchLower) ||
+                                                                val.date.toLowerCase().includes(searchLower) ||
+                                                                val.gift.toLowerCase().includes(searchLower) ||
+                                                                val.description.toLowerCase().includes(searchLower) 
+
+                                                            );
+                                                        })
+                                                        .map((award, index) => {
+                                                            return (
+                                                                <tr key={index}>
+                                                                    <td className="text-center">{award.id}</td>
+                                                                    <td className="text-center">{award.name}</td>
+                                                                    <td className="text-center">{award.awardType}</td>
+                                                                    <td className="text-center">{moment(award.date).format("DD-MM-YYYY")}</td>
+                                                                    <td className="text-center">{award.gift}</td>
+                                                                    <td className="text-center">{award.description}</td>
+                                                                    <td className="text-center">
+                                                                    <div className="d-flex align-items-center justify-content-center">
+                                                                        {/* <Link to={{ pathname: "/pages/award", state: { data: award } }}>         </Link> */}
+                                                                            {/* <CButton color="primary">View</CButton> */}
+                                                                
+                                                                        <CButton color="primary" onClick={() => { setAwardEditModal(true); setEditData(award) }}>Edit</CButton> &nbsp;
+                                                                    <CButton color="danger" onClick={() => handleDeleteAward(award.id)}>Delete</CButton>
+                                                                   </div> </td>
+                                                                </tr>
+                                                            );
+                                                        })
+
+                                            }
 
                                         </tbody>
                                     </table>
                                 </CCardBody>
+                                <ReactPaginate
+                                    previousLabel={"previous"}
+                                    nextLabel={"next"}
+                                    breakLabel={"..."}
+                                    pageCount={pageCount}
+                                    marginPagesDisplayed={2}
+                                    pageRangeDisplayed={3}
+                                    onPageChange={handlePageClick}
+                                    containerClassName={"pagination justify-content-center"}
+                                    pageClassName={"page-item"}
+                                    pageLinkClassName={"page-link"}
+                                    previousClassName={"page-item"}
+                                    previousLinkClassName={"page-link"}
+                                    nextClassName={"page-item"}
+                                    nextLinkClassName={"page-link"}
+                                    breakClassName={"page-item"}
+                                    breakLinkClassName={"page-link"}
+                                    activeClassName={"active"}
+                                />
                             </CCard>
                         </CCol>
                     </CRow>
@@ -514,7 +603,7 @@ export default function awards() {
                                                     type="date"
                                                     placeholder="Date"
                                                     name="date"
-                                                    value={ moment(values.date).format("YYYY-MM-DD")}
+                                                    value={moment(values.date).format("YYYY-MM-DD")}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
                                                     isInvalid={errors.date && touched.date}

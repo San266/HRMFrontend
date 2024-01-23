@@ -196,7 +196,7 @@ const meeting = () => {
 
                     <CCard style={{ margin: '20px', padding: '20px', backgroundColor: '#f8f9fa' }}>
                         <CCardBody>
-                            <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered">
+                            <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered text-center" >
                                 <thead className="table1header">
                                     <tr>
                                         <th scope="col">Meeting Name</th>

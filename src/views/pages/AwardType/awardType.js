@@ -109,17 +109,22 @@ const awardType = () => {
 
             <CRow>
                 <CCol sm={12}>
-                    <CCard>
+                    <CCard style={{ margin: '20px', padding: '20px', backgroundColor: '#f8f9fa' }}>
                         <CCardBody>
                             <CRow>
-                                <CCol sm={12}>
-                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered">
+                            <CCol>
+                                            <CCardTitle style={{ marginBottom: '20px', fontSize: '1.5rem' }}>Award Types</CCardTitle>
+                                        </CCol>
+                                        
+                                    </CRow>
+                                {/* <CCol sm={12}> */}
+                                    <table className="table table-hover table-outline mb-0 d-none d-sm-table table-bordered text-center">
                                         <thead className="thead-light">
                                             <tr>
-                                                <th className="text-center">Award Type</th>
-                                                <th className="text-center">Status</th>
+                                                <th >Award Type</th>
+                                                <th >Status</th>
                                                 {role === 'ADMIN' || role === 'HR' ? (
-                                                    <th className="text-center">Action</th>
+                                                    <th >Action</th>
                                                 ) : null}
                                                 {/* <th className="text-center">Action</th> */}
                                             </tr>
@@ -130,18 +135,18 @@ const awardType = () => {
                                                     awardType.map((awardType, index) => (
                                                         <tr key={index}>
 
-                                                            <td className="text-center">
+                                                            <td >
                                                                 <div>{awardType.awardType}</div>
 
                                                             </td>
-                                                            <td className="text-center">
+                                                            <td>
                                                                 <h6 style={{ color: "green" }}>
                                                                     Active
                                                                 </h6>
                                                             </td>
 
                                                             {role === 'ADMIN' || role === 'HR' ? (
-                                                                <td className="text-center">
+                                                                <td >
                                                                     <CButton color="primary" className="mr-2" onClick={() => {
                                                                         setEditAwardTypeModal(true);
                                                                         setSelectedEditAwardType(awardType);
@@ -156,8 +161,8 @@ const awardType = () => {
                                             }
                                         </tbody>
                                     </table>
-                                </CCol>
-                            </CRow>
+                                {/* </CCol> */}
+                            {/* </CRow> */}
                         </CCardBody>
                     </CCard>
                 </CCol>
